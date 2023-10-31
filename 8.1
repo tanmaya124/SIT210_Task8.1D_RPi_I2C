@@ -1,42 +1,43 @@
 # Importing the libraries
-import smbus
-import time
+import smbus  # Import the smbus library for I2C communication
+import time  # Import the time library for delays
 
 # Device Address
-Sensor = 0x23
+Sensor = 0x23  # I2C address of the light sensor
+Address = 0x23  # Same I2C address, this line is redundant
 
-Address = 0x23
-
-# To initiate the smbus library bus is used as a variable
-bus = smbus.SMBus(1)
+# To initiate the smbus library, 'bus' is used as a variable
+bus = smbus.SMBus(1)  # Create an smbus object for I2C communication on bus 1
 
 # Used to have the readings of the sensor
 def light():
-    address = bus.read_i2c_block_data(Sensor, Address)
-    value = Light_intensity(address)
-    return value    # Returns the captured value
+    address = bus.read_i2c_block_data(Sensor, Address)  # Read a block of data from the sensor
+    value = Light_intensity(address)  # Call the function to convert the data
+    return value  # Returns the captured light intensity value
 
+# Function to calculate light intensity
 def Light_intensity(address):
-    result = ((address[1] + (256 * address[0])) / 1.2)
-    return int (result)   # Returns the calculated result
+    result = ((address[1] + (256 * address[0])) / 1.2)  # Calculate light intensity from the sensor data
+    return int(result)  # Returns the calculated light intensity as an integer
 
+# Function to display light intensity and its category
 def output():
     while True:
         # To display the value
-        intensity = light()
+        intensity = light()  # Get the light intensity value from the sensor
 
-        if(intensity >= 400):
-            print(str(light()) + " -> Too Bright")
-        elif(intensity > 200 and intensity < 400):
+        if intensity >= 400:
+            print(str(light()) + " -> Too Bright")  # Print the light intensity and category
+        elif 200 < intensity < 400:
             print(str(light()) + " -> Bright")
-        elif(intensity > 50 and intensity < 200):
+        elif 50 < intensity < 200:
             print(str(light()) + " -> Medium")
-        elif(intensity > 20 and intensity < 50):
+        elif 20 < intensity < 50:
             print(str(light()) + " -> Dark")
-        elif(intensity < 20):
+        elif intensity < 20:
             print(str(light()) + " -> Too Dark")
 
         # Delay of 1 second
-        time.sleep(1)
-        
-output()
+        time.sleep(1)  # Pause for 1 second before the next reading
+
+output()  # Call the output function to start monitoring and displaying light intensity
